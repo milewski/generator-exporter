@@ -13,6 +13,12 @@ what this lib will do for you:
 
 If you are developing something that grab some assets from a psd file, why not using the the magic of assets generation to streamline your pipeline? so then you don't have to export your assets (and version controlling) every time you make some changes, and even better, if you are working with some kind of CI (Jenkins, Bamboo, Strider CD....) you can automate the assets extraction process!
 
+#INSTALL
+
+```bash
+npm install generator-exporter
+```
+
 Usage (Node)
 
 ```js
