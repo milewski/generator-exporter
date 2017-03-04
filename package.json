@@ -1,0 +1,58 @@
+{
+  "name": "generator-exporter",
+  "version": "1.0.4",
+  "description": "[Photoshop] Automate the 'Image Assets' menu, easy to integrate into any CI pipeline.",
+  "author": "Rafael Milewski <rafael.milewski@gmail.com>",
+  "bin": "bin/generator-cli",
+  "typings": [
+    "typings/App.d.ts",
+    "typings/Logger.d.ts"
+  ],
+  "main": "source/App.js",
+  "bin": "bin/generator-cli.js",
+  "files": [
+    "declaration",
+    "source/App.js",
+    "source/Logger.js",
+    "bin"
+  ],
+  "keywords": [
+    "photoshop",
+    "assets",
+    "generator",
+    "psd",
+    "exporter",
+    "automation",
+    "CI",
+    "extract",
+    "cli"
+  ],
+  "homepage": "https://github.com/Milewski/generator-exporter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Milewski/generator-exporter"
+  },
+  "bugs": {
+    "url": "https://github.com/Milewski/generator-exporter/issues"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "commander": "^2.9.0",
+    "console.table": "^0.8.0",
+    "generator-assets": "^2.7.3",
+    "generator-core": "^3.8.3",
+    "glob": "^7.1.1",
+    "opn": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/bluebird": "^3.0.37",
+    "@types/glob": "^5.0.30",
+    "@types/node": "^7.0.5",
+    "typescript": "^2.2.1"
+  }
+}
