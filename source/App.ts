@@ -1,43 +1,11 @@
 import { createGenerator } from 'generator-core/lib/generator';
+import { OptionsInterface } from './Interfaces/OptionsInterface';
+import { Logger } from './Logger';
 import * as Promise from 'bluebird';
 import * as assets from 'generator-assets';
 import * as open from 'opn';
-import { Logger } from './Logger';
 
-export interface GeneratorAssetsOptionsInterface {
-    'svg-enabled'?: boolean,
-    'svgomg-enabled'?: boolean,
-    'base-directory'?: string,
-    'css-enabled'?: boolean,
-    'use-smart-scaling'?: boolean,
-    'include-ancestor-masks'?: boolean,
-    'allow-dither'?: boolean,
-    'use-psd-smart-object-pixel-scaling'?: boolean,
-    'use-pngquant'?: boolean,
-    'convert-color-space'?: boolean,
-    'use-flite'?: boolean,
-    'embed-icc-profile'?: boolean,
-    'clip-all-images-to-document-bounds'?: boolean,
-    'clip-all-images-to-artboard-bounds'?: boolean,
-    'mask-adds-padding'?: boolean,
-    'expand-max-dimensions'?: boolean,
-    'webp-enabled'?: boolean,
-    'interpolation-type'?: string,
-    'icc-profile'?: string,
-    'use-jpg-encoding'?: string
-}
-
-export interface OptionsInterface {
-    closePhotoshop?: boolean,
-    hostname?: string,
-    password?: string,
-    port?: string|number,
-    maxRetries?: number,
-    retryDelay?: number,
-    generatorOptions?: GeneratorAssetsOptionsInterface
-}
-
-export default class Exporter {
+export class Generator {
 
     private generator;
     private files: string[];
@@ -82,7 +50,7 @@ export default class Exporter {
 
             if (this.retries++ < maxRetries - 1) {
                 console.log(`Connecting... Attempts: ${this.retries} of ${maxRetries}`)
-                return setTimeout(this.init.bind(this), retryDelay)
+                return setTimeout(this.start.bind(this), retryDelay)
             }
 
             console.warn('Could not connect to photoshop server. Did you "Enable Remote Connections" under Preferences -> Plug-Ins?');
@@ -90,7 +58,8 @@ export default class Exporter {
 
         })
 
-        this.generator.on('communicationsError', () => {
+        this.generator.on('communicationsError', (error) => {
+            console.warn('communicationsError', error)
             this.generator.shutdown();
         })
 
@@ -99,19 +68,12 @@ export default class Exporter {
             this.generator.shutdown();
         })
 
-        /**
-         * Start Process
-         */
-        // setTimeout(this.init.bind(this), retryDelay)
-
     }
 
 
-    private init() {
+    private start() {
 
         const { closePhotoshop } = this.options
-
-        console.log('close?', closePhotoshop)
 
         this.generator
             .start(this.options)
@@ -190,4 +152,4 @@ export default class Exporter {
     }
 
 }
-export const exporter = Exporter;
+export default Generator;
