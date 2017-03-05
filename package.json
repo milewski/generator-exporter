@@ -1,6 +1,6 @@
 {
   "name": "generator-exporter",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "[Photoshop] Automate the 'Image Assets' menu, easy to integrate into any CI pipeline.",
   "author": "Rafael Milewski <rafael.milewski@gmail.com>",
   "bin": "bin/generator-cli",
