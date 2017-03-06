@@ -9,6 +9,7 @@ require('console.table');
 
 program
     .option('-f, --files [regx]', 'files pattern [**/*.psd]', '**/*.psd')
+    .option('-e, --exclude [regx]', 'exclude all files that matches a given pattern')
     .option('-H, --hostname [string]', 'set photoshop server hostname [127.0.0.1]', '127.0.0.1')
     .option('-p, --password [string]', 'set photoshop server password [123456]', '123456')
     .option('-P, --port [string]', 'set photoshop server port [49494]', 49494)
@@ -18,8 +19,7 @@ program
     // .option('-g, --generator-options [object]', 'generator options [true]')
     .parse(process.argv);
 
-
-let files = glob.sync(path.resolve(program.files));
+let files = glob.sync(path.resolve(program.files), {ignore: program.exclude});
 
 if (!files.length) {
     return console.error(`No files found with the given pattern: ${program.files}`)

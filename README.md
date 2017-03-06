@@ -55,7 +55,7 @@ generator.start().then(() => console.log('done'));
 
 ```bash
 generator-cli --help 
-generator-cli --files 'demo/**/*.psd' --password 654321 -c false
+generator-cli --files 'source/**/*.psd' --exclude 'references/**/*.*' --password 654321 -c false 
 ```
 
 
