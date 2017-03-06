@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+const program = require('commander');
+const glob = require('glob');
+const path = require('path');
+const {Generator} = require('../source/Generator');
+
+require('console.table');
+
+program
+    .option('-f, --files [regx]', 'files pattern [**/*.psd]', '**/*.psd')
+    .option('-H, --hostname [string]', 'set photoshop server hostname [127.0.0.1]', '127.0.0.1')
+    .option('-p, --password [string]', 'set photoshop server password [123456]', '123456')
+    .option('-P, --port [string]', 'set photoshop server port [49494]', 49494)
+    .option('-c, --close-photoshop [boolean]', 'close photoshop automatically [true]', true)
+    .option('-m, --max-retries [int]', 'maximum attempts to try connecting to photoshop server [10]', parseInt, 10)
+    .option('-d, --retry-delay [int]', 'delay between each retry [5000]', parseInt, 5000)
+    // .option('-g, --generator-options [object]', 'generator options [true]')
+    .parse(process.argv);
+
+
+let files = glob.sync(path.resolve(program.files));
+
+if (!files.length) {
+    return console.error(`No files found with the given pattern: ${program.files}`)
+}
+
+console.info(`${files.length} files matched.`);
+
+(new Generator(files, program))
+    .start()
+    .then(() => {
+
+        const generated = glob.sync(path.parse(program.files).dir + '/*-assets/*.*');
+
+        console.table(
+            `\nGenerated Assets (${generated.length})`, generated
+        );
+
+    })

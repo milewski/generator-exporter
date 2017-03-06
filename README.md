@@ -24,7 +24,7 @@ In photoshop's preferences go to plug-ins and make sure **Enable Generator** and
 
 Pick any **Service Name** you like, and input a **Password** (this lib defaults to 123456).
 
-#INSTALL
+#Install
 
 ```bash
 npm install generator-exporter
