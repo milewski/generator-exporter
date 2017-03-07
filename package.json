@@ -1,6 +1,6 @@
 {
   "name": "generator-exporter",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "[Photoshop] Automate the 'Image Assets' menu, easy to integrate into any CI pipeline.",
   "author": "Rafael Milewski <rafael.milewski@gmail.com>",
   "typings": [
@@ -42,12 +42,12 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.4.7",
-    "commander": "^2.9.0",
     "console.table": "^0.8.0",
     "generator-assets": "^2.7.3",
     "generator-core": "^3.8.3",
     "glob": "^7.1.1",
-    "opn": "^4.0.2"
+    "opn": "^4.0.2",
+    "yargs": "^7.0.1"
   },
   "devDependencies": {
     "@types/bluebird": "^3.0.37",

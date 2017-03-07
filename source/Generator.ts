@@ -2,12 +2,17 @@ import { createGenerator } from 'generator-core/lib/generator';
 import { OptionsInterface } from './Interfaces/OptionsInterface';
 import { Logger } from './Logger';
 import * as Promise from 'bluebird';
-import * as assets from 'generator-assets';
 import * as open from 'opn';
+
+import * as AssetManager from 'generator-assets/lib/assetmanager';
+import * as RenderManager from 'generator-assets/lib/rendermanager';
+import * as DocumentManager from 'generator-assets/lib/documentmanager';
 
 export class Generator {
 
     private generator;
+    private renderManager;
+    private documentManager;
     private files: string[];
     private completed = false;
     private promiseResolver = null;
@@ -41,12 +46,10 @@ export class Generator {
         open(files[0], { wait: closePhotoshop })
 
         this.files = files;
-        this.generator = new createGenerator();
 
-        /**
-         * Init Assets only once
-         */
-        assets.init(this.generator, this.options.generatorOptions, this.logger)
+        this.generator = new createGenerator();
+        this.renderManager = new RenderManager(this.generator, this.options.generatorOptions, this.logger)
+        this.documentManager = new DocumentManager(this.generator, this.options.generatorOptions, this.logger)
 
         this.generator.on('close', () => {
 
@@ -105,16 +108,22 @@ export class Generator {
             return new Promise(resolve => {
 
                 this.open(file)
-                    .then(id => {
-                        assets._stateManager.activate(id);
-                        assets._renderManager.on('idle', () => {
-                            this.closeDocumentByID(id).then(resolve);
-                            assets._renderManager.removeAllListeners('idle');
+                    .then(id => this.documentManager.getDocument(id))
+                    .then(document => {
+
+                        let assetsManager = new AssetManager(
+                            this.generator, this.options.generatorOptions, this.logger, document, this.renderManager
+                        )
+
+                        assetsManager.start();
+
+                        assetsManager.once('idle', () => {
+                            assetsManager.stop();
+                            this.closeDocumentByID(document.id).then(() => resolve())
                         })
+
                     })
-
             })
-
         })
     }
 

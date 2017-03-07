@@ -1,40 +1,104 @@
 #!/usr/bin/env node
 
-const program = require('commander');
 const glob = require('glob');
 const path = require('path');
 const {Generator} = require('../source/Generator');
+const yargs = require('yargs');
+
+const options = yargs
+    .option({
+        f: {
+            alias: 'files',
+            describe: 'files pattern.',
+            default: '**/*.psd',
+            type: 'string',
+            demandOption: true
+        },
+        e: {
+            alias: 'exclude',
+            describe: 'exclude all files that matches a given pattern.',
+            type: 'string'
+        },
+        H: {
+            alias: 'hostname',
+            describe: 'set photoshop server hostname.',
+            default: '127.0.0.1',
+            type: 'string'
+        },
+        p: {
+            alias: 'password',
+            describe: 'set photoshop server password.',
+            default: '123456',
+            type: 'string'
+        },
+        P: {
+            alias: 'port',
+            describe: 'set photoshop server port.',
+            default: 49494,
+            type: 'number'
+        },
+        P: {
+            alias: 'port',
+            describe: 'set photoshop server port.',
+            default: 49494,
+            type: 'number'
+        },
+        c: {
+            alias: 'close-photoshop',
+            describe: 'close photoshop automatically.',
+            default: true,
+            type: 'boolean'
+        },
+        m: {
+            alias: 'max-retries',
+            describe: 'maximum attempts to try connecting to photoshop server.',
+            default: 10,
+            type: 'number'
+        },
+        d: {
+            alias: 'retry-delay',
+            describe: 'delay between each retry.',
+            default: 5000,
+            type: 'number'
+        },
+        g: {
+            alias: 'generator-options',
+            describe: 'delay between each retry.',
+            type: 'string'
+        },
+    })
+    .coerce('g', function (arg) {
+
+        if (arg.hasOwnProperty('base-directory')) {
+            arg['base-directory'] = path.resolve(arg['base-directory'])
+        }
+
+        return arg
+
+    })
+    .example('$0 -f "demo/**.psd" -p 123456 -g.base-directory outputDir', 'grab all psd files inside demo/ and save the extracted assets in outputDir!')
+    .help('h').alias('h', 'help')
+    .wrap(null)
+    .argv;
 
 require('console.table');
 
-program
-    .option('-f, --files [regx]', 'files pattern [**/*.psd]', '**/*.psd')
-    .option('-e, --exclude [regx]', 'exclude all files that matches a given pattern')
-    .option('-H, --hostname [string]', 'set photoshop server hostname [127.0.0.1]', '127.0.0.1')
-    .option('-p, --password [string]', 'set photoshop server password [123456]', '123456')
-    .option('-P, --port [string]', 'set photoshop server port [49494]', 49494)
-    .option('-c, --close-photoshop [boolean]', 'close photoshop automatically [true]', true)
-    .option('-m, --max-retries [int]', 'maximum attempts to try connecting to photoshop server [10]', parseInt, 10)
-    .option('-d, --retry-delay [int]', 'delay between each retry [5000]', parseInt, 5000)
-    // .option('-g, --generator-options [object]', 'generator options [true]')
-    .parse(process.argv);
-
-let files = glob.sync(path.resolve(program.files), {ignore: program.exclude});
+let files = glob.sync(path.resolve(options.files), {ignore: options.exclude});
 
 if (!files.length) {
-    return console.error(`No files found with the given pattern: ${program.files}`)
+    return console.error(`No files found with the given pattern: ${options.files}`)
 }
 
 console.info(`${files.length} files matched.`);
 
-(new Generator(files, program))
+(new Generator(files, options))
     .start()
     .then(() => {
 
-        const generated = glob.sync(path.parse(program.files).dir + '/*-assets/*.*');
+        const generated = glob.sync(path.parse(options.files).dir + '/*-assets/*.*');
 
         console.table(
             `\nGenerated Assets (${generated.length})`, generated
         );
 
-    })
+    });

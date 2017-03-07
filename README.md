@@ -7,7 +7,7 @@ What this lib will do for you:
 
 - Automatically launch photoshop
 - Open a given array of files
-- Enable the 'Image Assets' for you
+- Activate the Generator Assets Plugin
 - Close all documents after all assets has been generated, and optionally close photoshop.
 
 Perfect for CI (**Continuous Integration**) _This was the reason i built this anyway._
@@ -50,14 +50,12 @@ const generator = new Generator(files, {
 
 generator.start().then(() => console.log('done'));
 ```
-
 ####Usage from Command Line
 
 ```bash
 generator-cli --help 
-generator-cli --files 'source/**/*.psd' --exclude '**/*(references|temp)/**' --password 654321 -c false 
+generator-cli --files 'source/**/*.psd' --exclude '**/*(references|temp)/**' --password 654321 -c false -g.base-directory output
 ```
-
 
 #Config Options
 
