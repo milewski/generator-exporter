@@ -1,10 +1,10 @@
 {
   "name": "generator-exporter",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "description": "[Photoshop] Automate the 'Image Assets' menu, easy to integrate into any CI pipeline.",
   "author": "Rafael Milewski <rafael.milewski@gmail.com>",
   "typings": [
-    "typings/App.d.ts",
+    "typings/Generator.d.ts",
     "typings/Logger.d.ts"
   ],
   "main": "source/App.js",

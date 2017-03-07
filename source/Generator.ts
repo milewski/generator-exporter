@@ -42,6 +42,12 @@ export class Generator {
 
         this.files = files;
         this.generator = new createGenerator();
+
+        /**
+         * Init Assets only once
+         */
+        assets.init(this.generator, this.options.generatorOptions, this.logger)
+
         this.generator.on('close', () => {
 
             if (this.completed) {
@@ -50,7 +56,7 @@ export class Generator {
 
             if (this.retries++ < maxRetries - 1) {
                 console.log(`Connecting... Attempts: ${this.retries} of ${maxRetries}`)
-                return setTimeout(this.start.bind(this), retryDelay)
+                return setTimeout(this.start.bind(this), retryDelay);
             }
 
             console.warn('Could not connect to photoshop server. Did you "Enable Remote Connections" under Preferences -> Plug-Ins?');
@@ -69,7 +75,6 @@ export class Generator {
         })
 
     }
-
 
     private start() {
 
@@ -101,10 +106,10 @@ export class Generator {
 
                 this.open(file)
                     .then(id => {
-                        assets.init(this.generator, this.options.generatorOptions, this.logger)
                         assets._stateManager.activate(id);
                         assets._renderManager.on('idle', () => {
-                            this.closeDocumentByID(id).then(resolve)
+                            this.closeDocumentByID(id).then(resolve);
+                            assets._renderManager.removeAllListeners('idle');
                         })
                     })
 
