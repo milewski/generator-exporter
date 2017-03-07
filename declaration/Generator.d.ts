@@ -3,6 +3,8 @@ import { Logger } from './Logger';
 export declare class Generator {
     private logger;
     private generator;
+    private renderManager;
+    private documentManager;
     private files;
     private completed;
     private promiseResolver;
