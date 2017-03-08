@@ -4,6 +4,7 @@ import { DocDataInterface } from "./Interfaces/DocDataInterface";
 import { Logger } from './Logger';
 import { DocData } from "./DocData";
 import * as Promise from 'bluebird';
+import * as PromiseRetry from 'promise-retry';
 import * as open from 'opn';
 
 import * as AssetManager from 'generator-assets/lib/assetmanager';
@@ -117,9 +118,10 @@ export class Generator {
 
         return Promise.each(this.files, file => {
 
-            return new Promise(resolve => {
+            return PromiseRetry((retry, number) => {
 
-                this.open(file)
+                return this.open(file)
+                    .timeout(1000 * number)
                     .then(id => this.documentManager.getDocument(id))
                     .then(document => {
 
@@ -131,14 +133,34 @@ export class Generator {
 
                         assetsManager.start();
 
-                        assetsManager.once('idle', () => {
-                            assetsManager.stop();
-                            this.closeDocumentByID(document.id)
-                                .then(() => console.log(`Exported: ${this.documents[document.id].assets} Assets`))
-                                .then(() => resolve());
+                        return new Promise(resolve => {
+
+                            assetsManager.once('idle', () => {
+                                assetsManager.stop();
+                                this.closeDocumentByID(document.id)
+                                    .then(() => console.log(`Exported: ${this.documents[document.id].assets} Assets`))
+                                    .then(() => resolve());
+                            })
+
                         })
+
                     })
-            })
+                    .catch(() => {
+
+                        console.log(`Retrying to open: ${file}`)
+
+                        /**
+                         * If opening with Extension Script fails too many times.. try to open the file manually
+                         */
+                        if (number > 5) {
+                            open(file)
+                        }
+
+                        retry()
+
+                    })
+            }, { factor: 1 })
+
         })
     }
 
