@@ -123,6 +123,8 @@ export class Generator {
                     .then(id => this.documentManager.getDocument(id))
                     .then(document => {
 
+                        console.log(`Processing: ${file}`)
+
                         const assetsManager = new AssetManager(
                             this.generator, this.options.generatorOptions, this.logger, document, this.renderManager
                         )
@@ -132,7 +134,7 @@ export class Generator {
                         assetsManager.once('idle', () => {
                             assetsManager.stop();
                             this.closeDocumentByID(document.id)
-                                .then(() => console.log(`Processed: (${this.documents[document.id].assets}) ${file}`))
+                                .then(() => console.log(`Exported: ${this.documents[document.id].assets} Assets`))
                                 .then(() => resolve());
                         })
                     })
