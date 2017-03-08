@@ -121,7 +121,7 @@ export class Generator {
             return PromiseRetry((retry, number) => {
 
                 return this.open(file)
-                    .timeout(1000 * number)
+                    .timeout(5000)
                     .then(id => this.documentManager.getDocument(id))
                     .then(document => {
 
