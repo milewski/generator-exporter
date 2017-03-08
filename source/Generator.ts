@@ -1,6 +1,8 @@
 import { createGenerator } from 'generator-core/lib/generator';
 import { OptionsInterface } from './Interfaces/OptionsInterface';
+import { DocDataInterface } from "./Interfaces/DocDataInterface";
 import { Logger } from './Logger';
+import { DocData } from "./DocData";
 import * as Promise from 'bluebird';
 import * as open from 'opn';
 
@@ -13,8 +15,8 @@ export class Generator {
     private generator;
     private renderManager;
     private documentManager;
+    private documents: { [key: string]: DocDataInterface } = {};
     private files: string[];
-    private completed = false;
     private promiseResolver = null;
     private retries = 0;
 
@@ -33,7 +35,7 @@ export class Generator {
         /**
          * Extend options
          */
-        const { maxRetries, retryDelay, closePhotoshop } = Object.assign(this.options, options);
+        const { closePhotoshop } = Object.assign(this.options, options);
 
         if (!Array.isArray(files)) {
             files = [files]
@@ -51,20 +53,12 @@ export class Generator {
         this.renderManager = new RenderManager(this.generator, this.options.generatorOptions, this.logger)
         this.documentManager = new DocumentManager(this.generator, this.options.generatorOptions, this.logger)
 
-        this.generator.on('close', () => {
-
-            if (this.completed) {
-                return console.log('Assets Exported Successfully :)');
+        this.renderManager.on('render', (count, { id }) => {
+            let document = this.documents[id];
+            if (!document) this.documents[id] = new DocData(id)
+            else {
+                document.assets += 1;
             }
-
-            if (this.retries++ < maxRetries - 1) {
-                console.log(`Connecting... Attempts: ${this.retries} of ${maxRetries}`)
-                return setTimeout(this.start.bind(this), retryDelay);
-            }
-
-            console.warn('Could not connect to photoshop server. Did you "Enable Remote Connections" under Preferences -> Plug-Ins?');
-            process.exit(1);
-
         })
 
         this.generator.on('communicationsError', (error) => {
@@ -81,14 +75,32 @@ export class Generator {
 
     private start() {
 
-        const { closePhotoshop } = this.options
+        const { closePhotoshop, retryDelay, maxRetries } = this.options
 
-        this.generator
-            .start(this.options)
-            .then(() => this.processFiles())
-            .then(() => closePhotoshop ? this.closePhotoshop() : this.generator.shutdown())
-            .then(() => this.completed = true)
-            .then(() => this.promiseResolver())
+        process.nextTick(() => {
+
+            this.generator
+                .start(this.options)
+                .timeout(retryDelay)
+                .then(() => console.log('Connected!'))
+                .then(() => this.processFiles())
+                .then(() => closePhotoshop ? this.closePhotoshop() : this.generator.shutdown())
+                .then(() => console.log('Assets Exported Successfully :)'))
+                .then(() => this.promiseResolver())
+                .catch(() => {
+
+                    console.log(`Connecting... Attempts: ${++this.retries} of ${maxRetries}`)
+
+                    if (this.retries < maxRetries) {
+                        return this.start();
+                    }
+
+                    console.warn('Could not connect to photoshop server. Did you "Enable Remote Connections" under Preferences -> Plug-Ins?');
+                    process.exit(1);
+
+                })
+
+        })
 
         /**
          * Resolve the very first promise at the end of execution
@@ -111,7 +123,7 @@ export class Generator {
                     .then(id => this.documentManager.getDocument(id))
                     .then(document => {
 
-                        let assetsManager = new AssetManager(
+                        const assetsManager = new AssetManager(
                             this.generator, this.options.generatorOptions, this.logger, document, this.renderManager
                         )
 
@@ -119,9 +131,10 @@ export class Generator {
 
                         assetsManager.once('idle', () => {
                             assetsManager.stop();
-                            this.closeDocumentByID(document.id).then(() => resolve())
+                            this.closeDocumentByID(document.id)
+                                .then(() => console.log(`Processed: (${this.documents[document.id].assets}) ${file}`))
+                                .then(() => resolve());
                         })
-
                     })
             })
         })

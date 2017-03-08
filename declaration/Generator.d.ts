@@ -5,8 +5,8 @@ export declare class Generator {
     private generator;
     private renderManager;
     private documentManager;
+    private documents;
     private files;
-    private completed;
     private promiseResolver;
     private retries;
     private options;
