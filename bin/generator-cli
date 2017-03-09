@@ -101,4 +101,6 @@ console.info(`${files.length} files matched.`);
             `\nGenerated Assets (${generated.length})`, generated
         );
 
+        process.exit(1);
+
     });
