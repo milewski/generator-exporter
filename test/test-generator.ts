@@ -1,5 +1,4 @@
 import { Generator } from "../source/Generator";
-import { describe, it } from "mocha";
 import * as expect from "expect.js";
 import * as del from "del";
 import * as path from "path";
