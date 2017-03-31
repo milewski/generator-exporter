@@ -3,12 +3,8 @@
  */
 export declare class Logger {
     debug(): void;
-
     info(): void;
-
     warn(): void;
-
     warning(): void;
-
     error(): void;
 }
