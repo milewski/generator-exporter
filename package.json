@@ -1,6 +1,6 @@
 {
   "name": "generator-exporter",
-  "version": "1.0.19",
+  "version": "1.1.0",
   "description": "[Photoshop] Automate the 'Image Assets' menu, easy to integrate into any CI pipeline.",
   "author": "Rafael Milewski <rafael.milewski@gmail.com>",
   "typings": [
@@ -37,7 +37,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test": "mocha -t 30000 -u tdd"
   },
   "license": "MIT",
   "dependencies": {
@@ -53,7 +54,11 @@
   "devDependencies": {
     "@types/bluebird": "^3.0.37",
     "@types/glob": "^5.0.30",
+    "@types/mocha": "^2.2.39",
     "@types/node": "^7.0.5",
+    "del": "^2.2.2",
+    "expect.js": "^0.3.1",
+    "mocha": "^3.2.0",
     "typescript": "^2.2.1"
   }
 }

@@ -1,4 +1,5 @@
 export interface DocDataInterface {
-    assets: number;
+    assetsCount: number;
     id: number;
+    file: string;
 }

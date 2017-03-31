@@ -12,11 +12,11 @@ What this lib will do for you:
 
 Perfect for CI (**Continuous Integration**) _This was the reason i built this anyway._
 
-#Why do i need this?
+## Why do i need this?
 
 If you are developing something that grab some assets from a psd file, why not using the the magic of assets generation to streamline your pipeline? so then you don't have to export your assets every time you make some changes, and even better, if you are working with some kind of CI (Jenkins, Bamboo, [Strider](https://github.com/Strider-CD/strider)....) you can automate the assets extraction process!
 
-#Requirements
+## Requirements
 
 **You must have photoshop installed in your local machine in order to this lib to work.**
 
@@ -24,13 +24,13 @@ In photoshop's preferences go to plug-ins and make sure **Enable Generator** and
 
 Pick any **Service Name** you like, and input a **Password** (this lib defaults to 123456).
 
-#Install
+## Install
 
 ```bash
 npm install generator-exporter
 ```
 
-####Usage with Node
+#### Usage with Node
 
 ```js
 import { Generator } from 'generator-exporter'
@@ -48,16 +48,16 @@ const generator = new Generator(files, {
     }
 })
 
-generator.start().then(() => console.log('done'));
+generator.start().then(files => console.log(files));
 ```
-####Usage from Command Line
+#### Usage from Command Line
 
 ```bash
 generator-cli --help 
 generator-cli --files 'source/**/*.psd' --exclude '**/*(references|temp)/**' --password 654321 -c false -g.base-directory output
 ```
 
-#Config Options
+## Config Options (OptionsInterface)
 
 | Property         	| Default   	| Description                                                                                                              	|
 |------------------	|-----------	|--------------------------------------------------------------------------------------------------------------------------	|
@@ -68,3 +68,22 @@ generator-cli --files 'source/**/*.psd' --exclude '**/*(references|temp)/**' --p
 | maxRetries       	| 10        	| Max number of retries this library will try to make with photoshop before assume it's dead.                              	|
 | retryDelay       	| 5000      	| Delay between each retry.                                                                                                	|
 | generatorOptions 	| { ... }   	| [See all the available options in here.](https://github.com/adobe-photoshop/generator-assets/wiki/Configuration-Options) 	|
+
+## Api
+
+```js
+/** Create a Generator Instance  **/
+const generator = new Generator(string|string[], OptionsInterface)
+
+/** Start Extraction **/
+generator.start().then(files => {})
+
+/** Self Explanatory **/
+generator.closePhotoshop()
+generator.closeActiveDocument()
+generator.closeAllDocuments()
+```
+
+## License
+
+[MIT](LICENSE)
