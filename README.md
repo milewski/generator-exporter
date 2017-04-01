@@ -1,5 +1,9 @@
 # Photoshop Assets Generator
 
+[![npm version](https://badge.fury.io/js/generator-exporter.svg)](https://badge.fury.io/js/generator-exporter)
+[![npm downloads](https://img.shields.io/npm/dm/generator-exporter.svg)](https://www.npmjs.com/package/generator-exporter)
+[![dependencies](https://david-dm.org/Milewski/generator-exporter.svg)](https://www.npmjs.com/package/generator-exporter)
+
 Automate the extraction of photoshop assets using the **GENERATOR PLUGIN**,
 [here you can find a detailed explanation](https://github.com/adobe-photoshop/generator-assets/wiki/Generate-Web-Assets-Functional-Spec#getting-started) on how you should name your layers in order for this library to work.
 
