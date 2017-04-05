@@ -1,5 +1,7 @@
 # Photoshop Assets Generator
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Milewski/generator-exporter.svg)](https://greenkeeper.io/)
+
 [![npm version](https://badge.fury.io/js/generator-exporter.svg)](https://badge.fury.io/js/generator-exporter)
 [![npm downloads](https://img.shields.io/npm/dm/generator-exporter.svg)](https://www.npmjs.com/package/generator-exporter)
 [![dependencies](https://david-dm.org/Milewski/generator-exporter.svg)](https://www.npmjs.com/package/generator-exporter)
