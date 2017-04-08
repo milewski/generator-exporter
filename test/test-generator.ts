@@ -42,13 +42,13 @@ describe('Generator', () => {
     it('should fail if some files doesn\'t exist in disk', () => {
         return expect(() => {
             new Generator([samplePSD, path.resolve(__dirname, 'invalid/file.psd')], options)
-        }).to.throwException(/Invalid files, are you sure they exists\? .*\/file\.psd$/)
+        }).to.throwException(/Invalid files, are you sure they exists\? .*(\/|\\)file\.psd$/)
     });
 
     it('should fail if some of the files are not of type .psd', () => {
         return expect(() => {
             new Generator([samplePSD, path.resolve(__dirname, 'test-generator.ts')], options)
-        }).to.throwException(/Only PSD files are supported: .*\/test-generator\.ts$/)
+        }).to.throwException(/Only PSD files are supported: .*(\/|\\)test-generator\.ts$/)
     });
 
     it('should export all the file assets correctly', () => {
@@ -61,7 +61,7 @@ describe('Generator', () => {
 
                 files.forEach(file => {
                     expect(file).to.be.an(DocData)
-                    expect(file.assetsCount).to.be(8)
+                    expect(file.assets.length).to.be(8)
                 })
 
                 /**
@@ -86,7 +86,7 @@ describe('Generator', () => {
             .then(files => {
 
                 files.forEach(file => {
-                    expect(file.assetsCount).to.be(8)
+                    expect(file.assets.length).to.be(8)
                 })
 
                 expect(files).to.be.an(Array);

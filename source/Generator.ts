@@ -22,6 +22,7 @@ export class Generator {
     private files: string[];
     private promiseResolver = null;
     private retries = 0;
+    private pointer = 0;
 
     private options: OptionsInterface = {
         hostname: '127.0.0.1',
@@ -71,12 +72,20 @@ export class Generator {
         this.renderManager = new RenderManager(this.generator, this.options.generatorOptions, this.logger)
         this.documentManager = new DocumentManager(this.generator, this.options.generatorOptions, this.logger)
 
-        this.renderManager.on('render', (count, { id, file }) => {
-            let document = this.documents[id];
-            if (!document) this.documents[id] = new DocData({ id, file })
-            else {
-                document.assetsCount += 1;
+        this.renderManager.on('render', (count, { id, file }, component) => {
+
+            let document = this.documents[this.pointer];
+
+            if (!document) {
+                this.documents[this.pointer] = document = new DocData({ id, file })
             }
+
+            let { name, extension, width, height } = component;
+
+            document.add({ file: component.file, name, extension, size: { width, height } });
+
+            console.log(`Exporting layer: ${name}`)
+
         })
 
         this.generator.on('communicationsError', (error) => {
@@ -120,6 +129,10 @@ export class Generator {
 
         let { closePhotoshop } = this.options;
 
+        /**
+         * This will launch photoshop in mac without opening a file at first
+         * it's possible to open multiple instances of photoshop like this
+         */
         if (process.platform === 'darwin') {
             let args = ['-b', 'com.adobe.Photoshop', '--fresh']
             if (closePhotoshop) args.push('--wait-apps')
@@ -180,7 +193,7 @@ export class Generator {
                             assetsManager.once('idle', () => {
                                 assetsManager.stop();
                                 this.closeDocumentByID(document.id)
-                                    .then(() => console.log(`Exported: ${this.documents[document.id].assetsCount} Assets`))
+                                    .then(() => console.log(`Exported: ${this.documents[this.pointer++].assets.length} Assets`))
                                     .then(() => resolve());
                             })
 
@@ -248,8 +261,6 @@ export class Generator {
 
     /**
      * Returns all non PSD files
-     * @param files
-     * @returns string[]
      */
     private isPSD(files: string[]): string[] {
         return files.filter(file => !/\.(psd|PSD)$/.test(file))
@@ -257,9 +268,6 @@ export class Generator {
 
     /**
      * Returns all non Existing files
-     *
-     * @param files
-     * @returns string[]
      */
     private filesExists(files: string[]): string[] {
         return files.filter(file => !fs.existsSync(file));
