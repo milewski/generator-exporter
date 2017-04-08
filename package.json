@@ -42,7 +42,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "npm run build && npm test",
-    "tests": "mocha -u tdd --no-timeouts"
+    "test": "mocha -u tdd --no-timeouts"
   },
   "dependencies": {
     "bluebird": "^3.4.7",
